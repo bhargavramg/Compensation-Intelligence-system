@@ -39,7 +39,6 @@ export default function SalariesPage() {
   const [sort, setSort] = useState<"asc" | "desc">("desc");
   const tableRef = useRef<HTMLElement>(null);
 
-  // Benchmarking state
   const [benchmark, setBenchmark] = useState({ level: "L4", tc: "" });
   const [percentile, setPercentile] = useState<number | null>(null);
 
@@ -88,13 +87,12 @@ export default function SalariesPage() {
     return { median, p90, companies: uniqueCompanies };
   }, [salaries]);
 
-  // Benchmarking logic
   useEffect(() => {
     if (!benchmark.tc || isNaN(parseFloat(benchmark.tc))) {
       setPercentile(null);
       return;
     }
-    const userTC = parseFloat(benchmark.tc) * 100000; // Assuming input in Lakhs
+    const userTC = parseFloat(benchmark.tc) * 100000;
     const relevantSalaries = salaries.filter(s => s.level === benchmark.level);
     if (relevantSalaries.length === 0) {
       setPercentile(null);
@@ -106,204 +104,191 @@ export default function SalariesPage() {
   }, [benchmark, salaries]);
 
   return (
-    <div className="min-h-screen pb-20" style={{ background: "#0a0a0a" }}>
-      <div className="max-w-5xl mx-auto px-8 py-16 space-y-24 animate-fade-in">
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="max-w-[1200px] mx-auto px-12 py-12 space-y-12 animate-fade-in">
 
-        {/* Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center pt-8">
-          <section className="lg:col-span-3 space-y-8">
-            <div className="space-y-6">
-              <h1 className="text-[64px] font-extrabold leading-[1.1] tracking-tight text-white font-display">
-                Know what{" "}
-                <span style={{ color: "#818cf8" }}>engineers</span>
-                {" "}actually make
+        {/* Hero & Benchmark Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Left: Hero Content */}
+          <section className="lg:col-span-7 space-y-8 pt-2">
+            <div className="space-y-4">
+              <h1 className="text-[48px] font-bold leading-[1.15] tracking-tight text-white font-display">
+                Know what <span className="text-indigo-400">engineers</span><br />
+                actually make.
               </h1>
-              <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
-                Structured by level. Comparable by design. Real TC breakdowns
-                — not vague ranges — for India's tech ecosystem.
+              <p className="text-gray-300 text-lg max-w-md leading-relaxed opacity-90">
+                Structured by level. Comparable by design. Real TC breakdowns for India's tech ecosystem.
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={scrollToTable}
-                className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
-                style={{ background: "#6366f1" }}
+                className="px-6 py-2.5 rounded-lg font-bold text-sm text-white bg-indigo-500 hover:bg-indigo-400 transition-all active:scale-[0.98] shadow-lg shadow-indigo-500/20"
               >
-                Browse Salaries <ArrowRight size={16} />
+                Browse Salaries
               </button>
               <Link 
                 href="/submit"
-                className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98] border border-white/10"
+                className="px-6 py-2.5 rounded-lg font-bold text-sm text-gray-300 border border-white/10 hover:bg-white/5 transition-all active:scale-[0.98]"
               >
-                <PlusCircle size={16} /> Submit Salary
+                Submit Salary
               </Link>
             </div>
 
-            <div className="flex items-center gap-6 pt-4">
+            <div className="flex items-center gap-10 pt-4 border-t border-white/5">
               {[
-                { value: `${meta.total || "72"}+`, label: "Records" },
+                { value: `${meta.total || "500"}+`, label: "Records" },
                 { value: "L3 → L8", label: "Levels" },
                 { value: "100%", label: "Verified" },
               ].map((stat) => (
-                <div key={stat.label} className="space-y-0.5">
-                  <div className="text-white font-bold text-xl">{stat.value}</div>
-                  <div className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">{stat.label}</div>
+                <div key={stat.label} className="space-y-1">
+                  <div className="text-white font-bold text-xl tracking-tight">{stat.value}</div>
+                  <div className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.15em]">{stat.label}</div>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Inventive Benchmarking Widget */}
-          <div className="lg:col-span-2">
-            <div className="glass-card p-8 rounded-3xl border relative overflow-hidden group" style={{ background: "#111", borderColor: "#222" }}>
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                 <Target size={120} className="text-indigo-500" />
+          {/* Right: Benchmark Card */}
+          <div className="lg:col-span-5">
+            <div className="bg-[#111] border border-white/10 rounded-2xl p-8 shadow-2xl shadow-black/50 space-y-6">
+              <div className="space-y-1">
+                <h3 className="text-white font-bold text-base flex items-center gap-2">
+                  <Trophy size={16} className="text-indigo-400" />
+                  Quick Benchmark
+                </h3>
+                <p className="text-gray-500 text-xs font-medium">Compare your TC with the market.</p>
               </div>
-              
-              <div className="relative space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-white font-bold text-lg flex items-center gap-2">
-                    <Trophy size={18} className="text-yellow-500" />
-                    Quick Benchmark
-                  </h3>
-                  <p className="text-gray-500 text-xs">See where you stand in the current market.</p>
+
+              <div className="space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Level</span>
+                    <select 
+                      className="w-full bg-[#161616] border border-white/5 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500/30 transition-all"
+                      value={benchmark.level}
+                      onChange={e => setBenchmark(prev => ({ ...prev, level: e.target.value }))}
+                    >
+                      {LEVELS.slice(0, 6).map(l => <option key={l} value={l}>{l}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">TC (Lakhs)</span>
+                    <input 
+                      type="number" 
+                      placeholder="e.g. 24"
+                      className="w-full bg-[#161616] border border-white/5 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500/30 transition-all placeholder:text-gray-700"
+                      value={benchmark.tc}
+                      onChange={e => setBenchmark(prev => ({ ...prev, tc: e.target.value }))}
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Level</span>
-                      <select 
-                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/50"
-                        value={benchmark.level}
-                        onChange={e => setBenchmark(prev => ({ ...prev, level: e.target.value }))}
-                      >
-                        {LEVELS.slice(0, 6).map(l => <option key={l} value={l}>{l}</option>)}
-                      </select>
+                {percentile !== null ? (
+                  <div className="pt-2 space-y-4 animate-in fade-in slide-in-from-bottom-1 duration-300">
+                    <div className="space-y-2.5">
+                      <div className="flex justify-between text-[11px] font-bold">
+                        <span className="text-gray-500 uppercase tracking-wider">Market Percentile</span>
+                        <span className={percentile > 70 ? 'text-emerald-400' : 'text-indigo-400'}>{percentile}%</span>
+                      </div>
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-indigo-500 transition-all duration-700 ease-out" 
+                          style={{ width: `${percentile}%`, backgroundColor: percentile > 70 ? '#10b981' : '#6366f1' }}
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Your TC (Lakhs)</span>
-                      <input 
-                        type="number" 
-                        placeholder="e.g. 24"
-                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/50 placeholder:text-gray-700"
-                        value={benchmark.tc}
-                        onChange={e => setBenchmark(prev => ({ ...prev, tc: e.target.value }))}
-                      />
+                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 flex gap-3 items-start">
+                       <Info size={14} className="text-gray-400 shrink-0 mt-0.5" />
+                       <p className="text-[12px] text-gray-300 leading-normal">
+                         You earn more than <span className="font-bold text-white">{percentile}%</span> of {benchmark.level} engineers. 
+                         <span className="block mt-1 text-gray-500 text-[11px]">
+                           {percentile > 80 ? "Top-tier compensation." : percentile < 30 ? "Room for growth." : "Balanced market pay."}
+                         </span>
+                       </p>
                     </div>
                   </div>
-
-                  {percentile !== null ? (
-                    <div className="pt-4 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
-                          <span className="text-gray-500">Market Percentile</span>
-                          <span className={percentile > 70 ? 'text-emerald-400' : 'text-indigo-400'}>{percentile}%</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-[#1a1a1a] rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-indigo-500 transition-all duration-1000 ease-out" 
-                            style={{ width: `${percentile}%`, backgroundColor: percentile > 70 ? '#10b981' : '#6366f1' }}
-                          />
-                        </div>
-                      </div>
-                      <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex gap-3">
-                         <Info size={14} className="text-indigo-400 shrink-0 mt-0.5" />
-                         <p className="text-[11px] text-indigo-200 leading-relaxed">
-                           You earn more than <span className="font-bold">{percentile}%</span> of {benchmark.level} engineers in our database. 
-                           {percentile > 80 ? " You are in the top bracket!" : percentile < 30 ? " You might be underpaid." : " You are within market average."}
-                         </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="pt-8 text-center space-y-2 opacity-30">
-                       <Target size={24} className="mx-auto text-gray-500" />
-                       <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Enter data to benchmark</p>
-                    </div>
-                  )}
-                </div>
+                ) : (
+                  <div className="pt-6 pb-2 text-center opacity-40">
+                     <Target size={20} className="mx-auto text-gray-500 mb-2" />
+                     <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Enter details to see rank</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Browse by Company */}
-        <section className="space-y-6">
+        {/* Company Grid Section */}
+        <section className="space-y-6 pt-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-white font-bold text-xl tracking-tight">Browse by company</h2>
-              <p className="text-gray-500 text-sm">Explore compensation structures at top tech firms.</p>
+              <h2 className="text-white font-bold text-xl tracking-tight">Market Coverage</h2>
+              <p className="text-gray-500 text-sm font-medium">Real data from 47 top-tier firms.</p>
             </div>
-            <Link
-              href="/company"
-              className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors"
-            >
+            <Link href="/company" className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest">
               View all <ChevronRight size={14} />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {companies.length === 0
-              ? [...Array(8)].map((_, i) => (
-                  <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: "#111" }} />
-                ))
-              : companies.map((c) => (
-                  <Link
-                    key={c.company}
-                    href={`/company/${c.company}`}
-                    className="flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all hover:border-indigo-500/50 hover:bg-[#141414] group"
-                    style={{ background: "#111", borderColor: "#222" }}
-                  >
-                    <CompanyInitial name={c.company} />
-                    <div className="min-w-0">
-                      <div className="text-white font-bold text-sm truncate group-hover:text-indigo-400 transition-colors">
-                        {c.company.charAt(0).toUpperCase() + c.company.slice(1)}
-                      </div>
-                      <div className="text-gray-500 text-[11px] font-medium">{c.count} verified records</div>
-                    </div>
-                  </Link>
-                ))}
+            {companies.map((c) => (
+              <Link
+                key={c.company}
+                href={`/company/${c.company}`}
+                className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 hover:bg-[#141414] transition-all group"
+              >
+                <CompanyInitial name={c.company} />
+                <div className="min-w-0">
+                  <div className="text-white font-bold text-sm truncate group-hover:text-indigo-400 transition-colors">
+                    {c.company.charAt(0).toUpperCase() + c.company.slice(1)}
+                  </div>
+                  <div className="text-gray-500 text-[11px] font-medium">{c.count} records</div>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
 
-        {/* Salary Table */}
-        <section ref={tableRef} className="space-y-6 pt-12">
-          <div className="flex items-center justify-between border-b border-[#1a1a1a] pb-6">
+        {/* Data Table Section */}
+        <section ref={tableRef} className="space-y-6 pt-8">
+          <div className="flex items-center justify-between border-b border-white/5 pb-6">
             <div className="space-y-1">
-              <h2 className="text-white font-bold text-xl tracking-tight">Market Intelligence</h2>
-              <p className="text-gray-500 text-sm">Real-time compensation data from the community.</p>
+              <h2 className="text-white font-bold text-xl tracking-tight">Raw Intelligence</h2>
+              <p className="text-gray-500 text-sm font-medium">Recent verified compensation entries.</p>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-white font-mono font-bold text-lg">{meta.total}</span>
-              <span className="text-[10px] text-gray-600 uppercase font-bold tracking-widest">Total Records</span>
+            <div className="text-right">
+              <div className="text-white font-bold text-xl font-mono">{meta.total}</div>
+              <div className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Data Points</div>
             </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3">
-            <div className="flex-[2] min-w-[200px] flex items-center gap-2 px-4 rounded-xl border transition-all focus-within:border-indigo-500/50" style={{ background: "#111", borderColor: "#222" }}>
+          {/* Table Filters */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div className="sm:col-span-1 flex items-center gap-2 px-4 rounded-xl bg-[#111] border border-white/5 focus-within:border-indigo-500/30 transition-all">
               <Search size={14} className="text-gray-600" />
               <input
                 type="text"
-                placeholder="Search company..."
-                className="w-full bg-transparent py-3 text-sm outline-none text-white placeholder:text-gray-700"
+                placeholder="Company"
+                className="w-full bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-gray-700"
                 value={filters.company}
                 onChange={(e) => setFilter("company", e.target.value)}
               />
             </div>
-            <div className="flex-[1.5] min-w-[150px] flex items-center gap-2 px-4 rounded-xl border transition-all focus-within:border-indigo-500/50" style={{ background: "#111", borderColor: "#222" }}>
+            <div className="sm:col-span-1 flex items-center gap-2 px-4 rounded-xl bg-[#111] border border-white/5 focus-within:border-indigo-500/30 transition-all">
               <Briefcase size={14} className="text-gray-600" />
               <input
                 type="text"
                 placeholder="Role"
-                className="w-full bg-transparent py-3 text-sm outline-none text-white placeholder:text-gray-700"
+                className="w-full bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-gray-700"
                 value={filters.role}
                 onChange={(e) => setFilter("role", e.target.value)}
               />
             </div>
             <select
-              className="flex-1 px-4 py-3 rounded-xl border text-sm outline-none text-gray-400 appearance-none bg-[#111] border-[#222] focus:border-indigo-500/50"
+              className="px-4 py-2.5 rounded-xl bg-[#111] border border-white/5 text-sm text-gray-400 outline-none focus:border-indigo-500/30 appearance-none"
               value={filters.level}
               onChange={(e) => setFilter("level", e.target.value)}
             >
@@ -311,7 +296,7 @@ export default function SalariesPage() {
               {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
             <select
-              className="flex-1 px-4 py-3 rounded-xl border text-sm outline-none text-gray-400 appearance-none bg-[#111] border-[#222] focus:border-indigo-500/50"
+              className="px-4 py-2.5 rounded-xl bg-[#111] border border-white/5 text-sm text-gray-400 outline-none focus:border-indigo-500/30 appearance-none"
               value={filters.location}
               onChange={(e) => setFilter("location", e.target.value)}
             >
@@ -321,45 +306,33 @@ export default function SalariesPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1a1a1a" }}>
+          <div className="rounded-2xl border border-white/5 overflow-hidden bg-[#0d0d0d]">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
-                <tr style={{ background: "#111" }}>
-                  {["Company", "Role", "Level", "Location", "Exp", "Base", "Bonus", "Stock/yr", "Total"].map(h => (
-                    <th key={h} className="px-5 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500 border-b" style={{ borderColor: "#1a1a1a" }}>
+                <tr className="bg-[#111] border-b border-white/5">
+                  {["Company", "Role", "Level", "Location", "Exp", "Base", "Bonus", "Stock", "Total"].map(h => (
+                    <th key={h} className="px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
-                {loading ? (
-                  [...Array(6)].map((_, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid #141414" }}>
-                      <td colSpan={9} className="px-5 py-6">
-                        <div className="h-3 rounded-full animate-pulse" style={{ background: "#141414" }} />
-                      </td>
-                    </tr>
-                  ))
-                ) : salaries.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="group transition-all hover:bg-[#111]"
-                    style={{ borderBottom: "1px solid #141414" }}
-                  >
+              <tbody className="divide-y divide-white/5">
+                {salaries.map((s) => (
+                  <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-4">
-                      <Link href={`/company/${s.company}`} className="flex items-center gap-3 group/link">
+                      <Link href={`/company/${s.company}`} className="flex items-center gap-3 group">
                         <CompanyInitial name={s.company} />
-                        <span className="font-bold text-white group-hover/link:text-indigo-400 transition-colors">
+                        <span className="font-bold text-white group-hover:text-indigo-400 transition-colors">
                           {s.company.charAt(0).toUpperCase() + s.company.slice(1)}
                         </span>
                       </Link>
                     </td>
-                    <td className="px-5 py-4 text-gray-400 max-w-[160px] truncate">{s.role}</td>
+                    <td className="px-5 py-4 text-gray-400 max-w-[140px] truncate">{s.role}</td>
                     <td className="px-5 py-4"><LevelBadge level={s.level} /></td>
-                    <td className="px-5 py-4 text-gray-500 text-[11px] font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <MapPin size={12} className="text-gray-600" /> {s.location}
+                    <td className="px-5 py-4 text-gray-500 text-xs">
+                      <div className="flex items-center gap-1.5 font-medium">
+                        <MapPin size={12} className="text-gray-700" /> {s.location}
                       </div>
                     </td>
                     <td className="px-5 py-4 text-gray-400 font-mono text-xs">{s.experience_years}y</td>
@@ -367,7 +340,7 @@ export default function SalariesPage() {
                     <td className="px-5 py-4 text-gray-400 font-mono text-xs text-right">{s.bonus > 0 ? formatINR(s.bonus) : "—"}</td>
                     <td className="px-5 py-4 text-gray-400 font-mono text-xs text-right">{s.stock > 0 ? formatINR(s.stock) : "—"}</td>
                     <td className="px-5 py-4 text-right">
-                      <span className="font-bold font-mono text-sm" style={{ color: "#818cf8" }}>
+                      <span className="font-bold font-mono text-sm text-indigo-400">
                         {formatINR(s.total_compensation)}
                       </span>
                     </td>

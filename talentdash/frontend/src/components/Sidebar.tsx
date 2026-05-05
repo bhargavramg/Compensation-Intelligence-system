@@ -19,14 +19,14 @@ export function Sidebar({ totalSalaries = 0 }: { totalSalaries?: number }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 h-screen sticky top-0 bg-surface border-r border-border flex flex-col p-4">
-      <div className="flex items-center gap-3 px-4 mb-10">
-        <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-bg shadow-lg shadow-accent/20">
-          <LayoutDashboard size={20} strokeWidth={2.5} />
+    <aside className="w-64 h-screen sticky top-0 bg-[#0d0d0d] border-r border-white/5 flex flex-col p-6">
+      <div className="flex items-center gap-3 mb-12">
+        <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <LayoutDashboard size={18} strokeWidth={2.5} />
         </div>
         <div>
-          <h1 className="text-lg font-bold leading-none font-display tracking-tight text-white">PayLevel</h1>
-          <p className="text-[10px] text-text-muted uppercase tracking-widest mt-1">Comp Intelligence</p>
+          <h1 className="text-base font-bold leading-none tracking-tight text-white">PayLevel</h1>
+          <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-1">Market Intel</p>
         </div>
       </div>
 
@@ -38,35 +38,33 @@ export function Sidebar({ totalSalaries = 0 }: { totalSalaries?: number }) {
               key={link.href}
               href={link.href}
               className={cn(
-                "nav-item",
-                isActive ? "nav-item-active" : "nav-item-inactive"
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                isActive ? "bg-white/5 text-indigo-400 border border-white/5" : "text-gray-500 hover:text-white hover:bg-white/5"
               )}
             >
-              <link.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+              <link.icon size={16} strokeWidth={isActive ? 2.5 : 2} />
               {link.label}
-              {isActive && link.label === "Compare" && (
-                <span className="ml-auto text-[10px] bg-accent/20 px-1.5 py-0.5 rounded border border-accent/30 font-bold">2/2</span>
-              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-6">
         <Link 
           href="/submit"
-          className="w-full bg-accent hover:bg-accent/90 text-bg py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-indigo-500/10"
         >
-          <PlusCircle size={18} strokeWidth={3} />
+          <PlusCircle size={16} strokeWidth={2.5} />
           Submit salary
         </Link>
         
-        <div className="px-4 py-2">
-          <p className="text-[10px] text-text-muted uppercase tracking-widest text-center">
-            {totalSalaries} salaries indexed
+        <div className="text-center">
+          <p className="text-[10px] text-gray-600 uppercase tracking-[0.2em] font-bold">
+            {totalSalaries} indexed
           </p>
         </div>
       </div>
     </aside>
+
   );
 }
