@@ -269,19 +269,11 @@ export default function SalariesPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/10 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
                  <Fingerprint size={12} className="text-indigo-400" /> Verified Market Data
               </div>
-              <h1 className="text-5xl sm:text-7xl font-extrabold leading-[1.05] tracking-tight text-white font-display">
-                See what top engineers <br />
-                <span className="text-gradient-indigo">ACTUALLY</span> earn.
+              <h1 className="text-6xl sm:text-8xl font-extrabold leading-[0.95] tracking-tighter font-display flex flex-col">
+                <span className="text-white">Real salaries.</span>
+                <span className="text-gradient-indigo">Real levels.</span>
+                <span className="text-4xl sm:text-6xl text-gray-600 mt-2">No noise.</span>
               </h1>
-              <div className="space-y-1">
-                <p className="text-xl sm:text-2xl font-bold tracking-tight">
-                  <span className="text-white">Real salaries.</span>{" "}
-                  <span className="text-gradient-indigo">Real levels.</span>
-                </p>
-                <p className="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-[0.2em]">
-                  No noise.
-                </p>
-              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
