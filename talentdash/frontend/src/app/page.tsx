@@ -1,20 +1,43 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { getSalaries, formatINR, type Salary } from "@/lib/api";
+import { getSalaries, getCompanies, formatINR, type Salary } from "@/lib/api";
 import { LevelBadge } from "@/components/LevelBadge";
-import { Search, MapPin, Briefcase, ChevronDown, Filter, Info, TrendingUp, Database, Building2, Sparkles } from "lucide-react";
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Search, MapPin, Briefcase, TrendingUp, Database, Building2, ChevronRight, ArrowRight } from "lucide-react";
 
 const LEVELS = ["L3","L4","L5","L6","L7","SDE1","SDE2","SDE3","Senior","Staff","Principal","E3","E4","E5","E6","E7","Director"];
 const LOCATIONS = ["Bangalore", "Hyderabad", "Pune", "Remote", "Gurgaon"];
 
+const COMPANY_COLORS: Record<string, string> = {
+  google: "#4285F4", microsoft: "#00A4EF", amazon: "#FF9900", meta: "#0866FF",
+  flipkart: "#F9A825", swiggy: "#FC8019", razorpay: "#2D81FF", zepto: "#9C27B0",
+  meesho: "#F43B96", phonepe: "#5F259F", cred: "#1A1A1A", groww: "#00D09C",
+  zomato: "#E23744", paytm: "#00BAF2", infosys: "#0070C0", wipro: "#344899",
+  tcs: "#C00000", hcl: "#0076C0", netflix: "#E50914", uber: "#000000",
+  ola: "#343434", byju: "#00A0E3", unacademy: "#08BD80", atlassian: "#0052CC",
+  salesforce: "#00A1E0",
+};
+
+function CompanyInitial({ name }: { name: string }) {
+  const color = COMPANY_COLORS[name.toLowerCase()] || "#10b981";
+  return (
+    <div
+      className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+      style={{ backgroundColor: color }}
+    >
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
 export default function SalariesPage() {
   const [salaries, setSalaries] = useState<Salary[]>([]);
+  const [companies, setCompanies] = useState<{ company: string; count: number; avg_compensation: number }[]>([]);
   const [meta, setMeta] = useState({ total: 0, page: 1, pages: 1 });
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ company: "", role: "", level: "", location: "" });
   const [sort, setSort] = useState<"asc" | "desc">("desc");
+  const [showTable, setShowTable] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -39,234 +62,218 @@ export default function SalariesPage() {
     return () => clearTimeout(t);
   }, [fetchData]);
 
+  useEffect(() => {
+    getCompanies()
+      .then(res => setCompanies(res.data.slice(0, 8)))
+      .catch(console.error);
+  }, []);
+
   const setFilter = (key: string, val: string) =>
     setFilters((prev) => ({ ...prev, [key]: val }));
-
-  const chartData = useMemo(() => {
-    return salaries.map(s => ({
-      x: s.experience_years,
-      y: s.total_compensation / 100000, // In Lakhs for chart axis
-      rawY: s.total_compensation,
-      level: s.level,
-      company: s.company,
-      role: s.role
-    }));
-  }, [salaries]);
 
   const stats = useMemo(() => {
     if (salaries.length === 0) return { median: 0, p90: 0, companies: 0 };
     const sorted = [...salaries].sort((a, b) => a.total_compensation - b.total_compensation);
     const median = sorted[Math.floor(sorted.length / 2)].total_compensation;
     const p90 = sorted[Math.floor(sorted.length * 0.9)]?.total_compensation || median;
-    const companies = new Set(salaries.map(s => s.company)).size;
-    return { median, p90, companies };
+    const uniqueCompanies = new Set(salaries.map(s => s.company)).size;
+    return { median, p90, companies: uniqueCompanies };
   }, [salaries]);
 
-  const levelColorMap: Record<string, string> = {
-    L3: "#6ee7b7", L4: "#34d399", L5: "#10b981", L6: "#f59e0b", L7: "#ef4444"
-  };
-
   return (
-    <div className="min-h-screen bg-grid">
-      <div className="p-10 max-w-7xl mx-auto space-y-12 animate-fade-in">
-        {/* Hero */}
-        <section className="space-y-4 pt-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-black border border-white/10 rounded-lg text-[11px] font-bold text-white/90">
-             <Sparkles size={14} className="text-emerald-500 fill-emerald-500/20" />
-             India Tech · Standardized Levels
-          </div>
-          <h1 className="text-[72px] font-extrabold font-display leading-[1.1] tracking-tight">
-            Compensation, <span className="text-gradient-emerald">structured by</span> <br />
-            <span className="text-gradient-cyan">level.</span>
+    <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
+      <div className="max-w-5xl mx-auto px-8 py-16 space-y-16 animate-fade-in">
+
+        {/* Hero Section */}
+        <section className="text-center space-y-6 pt-8">
+          <h1 className="text-[64px] font-extrabold leading-[1.1] tracking-tight text-white font-display">
+            Know what{" "}
+            <span style={{ color: "#818cf8" }}>engineers</span>
+            {" "}actually make
           </h1>
-          <p className="text-text-dim text-xl max-w-2xl leading-relaxed">
-            Same role ≠ same pay. PayLevel normalizes every salary to L3–L8 bands so you can compare offers like-for-like across companies.
+          <p className="text-gray-400 text-lg max-w-xl mx-auto leading-relaxed">
+            Structured by level. Comparable by design. Real TC breakdowns<br />
+            — not vague ranges — for India's tech ecosystem.
           </p>
+
+          {/* CTA Buttons */}
+          <div className="flex items-center justify-center gap-4 pt-2">
+            <button
+              onClick={() => setShowTable(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+              style={{ background: "#6366f1" }}
+            >
+              Browse Salaries <ArrowRight size={16} />
+            </button>
+            <button className="px-6 py-3 rounded-lg font-semibold text-gray-300 hover:text-white transition-colors">
+              Submit Your Salary
+            </button>
+          </div>
+
+          {/* Stat Pills */}
+          <div className="flex items-center justify-center gap-4 pt-4">
+            {[
+              { value: `${meta.total || "39"}+`, label: "Salary records" },
+              { value: "L3 → L8", label: "Level system" },
+              { value: "3-part", label: "TC breakdown" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="px-5 py-3 rounded-xl text-center border"
+                style={{ background: "#141414", borderColor: "#2a2a2a" }}
+              >
+                <div className="text-white font-bold text-lg">{stat.value}</div>
+                <div className="text-gray-500 text-xs mt-0.5">{stat.label}</div>
+              </div>
+            ))}
+          </div>
         </section>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-6">
-          {[
-            { label: "Records", value: meta.total, sub: "filtered results", icon: Database },
-            { label: "Companies", value: stats.companies, sub: "in current view", icon: Building2 },
-            { label: "Median TC", value: formatINR(stats.median), sub: "across filters", icon: TrendingUp },
-            { label: "P90 TC", value: formatINR(stats.p90), sub: "top 10%", icon: TrendingUp },
-          ].map((stat) => (
-            <div key={stat.label} className="glass-card p-6 space-y-3 hover:border-accent/30 transition-all group">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted group-hover:text-accent transition-colors">{stat.label}</span>
-                <stat.icon size={16} className="text-text-muted group-hover:text-accent transition-colors" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-3xl font-bold font-mono tracking-tight">{stat.value}</div>
-                <p className="text-[11px] text-text-dim">{stat.sub}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Browse by Company */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-white font-bold text-lg">Browse by company</h2>
+            <Link
+              href="/company"
+              className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              View all <ChevronRight size={14} />
+            </Link>
+          </div>
 
-        {/* Chart Section */}
-        <div className="glass-card p-8">
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-1">
-               <h2 className="text-sm font-bold flex items-center gap-2">
-                 <TrendingUp size={16} className="text-accent" />
-                 Compensation vs Experience
-               </h2>
-               <p className="text-xs text-text-muted">Each dot is one salary record. Hover for details.</p>
-            </div>
-            <div className="flex gap-4">
-               {Object.entries(levelColorMap).map(([lvl, color]) => (
-                 <div key={lvl} className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-                    <span className="text-[10px] font-bold text-text-muted">{lvl}</span>
-                 </div>
-               ))}
-            </div>
-          </div>
-          
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
-                <XAxis 
-                  type="number" 
-                  dataKey="x" 
-                  name="Experience" 
-                  unit="y" 
-                  stroke="#4b5563" 
-                  fontSize={10} 
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis 
-                  type="number" 
-                  dataKey="y" 
-                  name="Total TC" 
-                  unit="L" 
-                  stroke="#4b5563" 
-                  fontSize={10} 
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="bg-surface border border-border p-3 rounded-lg shadow-2xl">
-                          <p className="text-xs font-bold text-accent mb-1">{data.company} · {data.role}</p>
-                          <p className="text-[10px] text-text-muted">{data.level} · {data.x}y exp</p>
-                          <p className="text-sm font-mono font-bold mt-2">{formatINR(data.rawY)}</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Scatter data={chartData}>
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={levelColorMap[entry.level] || "#4b5563"} />
-                  ))}
-                </Scatter>
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Filters Bar */}
-        <div className="flex gap-4 items-center bg-surface-muted/50 p-2 rounded-xl border border-border">
-          <div className="flex-1 flex items-center gap-2 px-4 bg-surface border border-border rounded-lg group focus-within:border-accent/50 transition-all">
-            <Search size={16} className="text-text-muted group-focus-within:text-accent" />
-            <input 
-              type="text" 
-              placeholder="Company (e.g. Google)" 
-              className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-text-muted"
-              value={filters.company}
-              onChange={(e) => setFilter("company", e.target.value)}
-            />
-          </div>
-          <div className="flex-1 flex items-center gap-2 px-4 bg-surface border border-border rounded-lg group focus-within:border-accent/50 transition-all">
-            <Briefcase size={16} className="text-text-muted group-focus-within:text-accent" />
-            <input 
-              type="text" 
-              placeholder="Role (e.g. SDE)" 
-              className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-text-muted"
-              value={filters.role}
-              onChange={(e) => setFilter("role", e.target.value)}
-            />
-          </div>
-          <select 
-            className="bg-surface border border-border rounded-lg py-3 px-4 text-sm outline-none focus:border-accent/50 appearance-none min-w-[140px]"
-            value={filters.level}
-            onChange={(e) => setFilter("level", e.target.value)}
-          >
-            <option value="">All Levels</option>
-            {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-          <select 
-            className="bg-surface border border-border rounded-lg py-3 px-4 text-sm outline-none focus:border-accent/50 appearance-none min-w-[140px]"
-            value={filters.location}
-            onChange={(e) => setFilter("location", e.target.value)}
-          >
-            <option value="">All Locations</option>
-            {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
-        </div>
-
-        {/* Table */}
-        <div className="glass-card overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-surface-muted/50">
-                <th className="table-header w-12"><input type="checkbox" className="accent-accent" /></th>
-                <th className="table-header">Company</th>
-                <th className="table-header">Role</th>
-                <th className="table-header">Level</th>
-                <th className="table-header">Location</th>
-                <th className="table-header">Exp</th>
-                <th className="table-header text-right">Base</th>
-                <th className="table-header text-right">Bonus</th>
-                <th className="table-header text-right">Stock/yr</th>
-                <th className="table-header text-right">Total Comp</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                     <td colSpan={10} className="py-6 px-6 border-b border-border/50">
-                        <div className="h-4 bg-surface-muted rounded w-full"></div>
-                     </td>
-                  </tr>
+          <div className="grid grid-cols-4 gap-3">
+            {companies.length === 0
+              ? [...Array(8)].map((_, i) => (
+                  <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "#141414" }} />
                 ))
-              ) : salaries.map((s) => (
-                <tr key={s.id} className="hover:bg-surface-muted/50 transition-colors group">
-                  <td className="table-cell"><input type="checkbox" className="accent-accent" /></td>
-                  <td className="table-cell font-bold text-white group-hover:text-accent transition-colors">
-                    <Link href={`/company/${s.company}`}>{s.company.charAt(0).toUpperCase() + s.company.slice(1)}</Link>
-                  </td>
-                  <td className="table-cell text-text-dim">{s.role}</td>
-                  <td className="table-cell"><LevelBadge level={s.level} /></td>
-                  <td className="table-cell text-text-dim flex items-center gap-1.5 whitespace-nowrap">
-                    <MapPin size={12} className="text-text-muted" /> {s.location}
-                  </td>
-                  <td className="table-cell font-mono font-bold text-white">{s.experience_years}y</td>
-                  <td className="table-cell text-right font-mono text-text-dim">{formatINR(s.base_salary)}</td>
-                  <td className="table-cell text-right font-mono text-text-dim">{s.bonus > 0 ? formatINR(s.bonus) : "₹0.0L"}</td>
-                  <td className="table-cell text-right font-mono text-text-dim">{s.stock > 0 ? formatINR(s.stock) : "₹0.0L"}</td>
-                  <td className="table-cell text-right">
-                     <div className="flex flex-col items-end">
-                        <span className="text-accent font-bold font-mono text-base">{formatINR(s.total_compensation)}</span>
-                        <span className="text-[9px] text-text-muted font-mono tracking-tighter">₹{s.total_compensation.toLocaleString("en-IN")}</span>
-                     </div>
-                  </td>
+              : companies.map((c) => (
+                  <Link
+                    key={c.company}
+                    href={`/company/${c.company}`}
+                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-all hover:border-gray-600 group"
+                    style={{ background: "#111111", borderColor: "#222222" }}
+                  >
+                    <CompanyInitial name={c.company} />
+                    <div className="min-w-0">
+                      <div className="text-white font-semibold text-sm truncate group-hover:text-indigo-400 transition-colors">
+                        {c.company.charAt(0).toUpperCase() + c.company.slice(1)}
+                      </div>
+                      <div className="text-gray-500 text-xs">{c.count} records</div>
+                    </div>
+                  </Link>
+                ))}
+          </div>
+        </section>
+
+        {/* Salary Table (shown on Browse click or by default) */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-white font-bold text-lg">All Salary Records</h2>
+            <span className="text-gray-500 text-sm">{meta.total} results</span>
+          </div>
+
+          {/* Filters */}
+          <div className="flex gap-3">
+            <div className="flex-1 flex items-center gap-2 px-4 rounded-lg border" style={{ background: "#111111", borderColor: "#222222" }}>
+              <Search size={14} className="text-gray-500" />
+              <input
+                type="text"
+                placeholder="Company"
+                className="w-full bg-transparent py-2.5 text-sm outline-none text-white placeholder:text-gray-600"
+                value={filters.company}
+                onChange={(e) => setFilter("company", e.target.value)}
+              />
+            </div>
+            <div className="flex-1 flex items-center gap-2 px-4 rounded-lg border" style={{ background: "#111111", borderColor: "#222222" }}>
+              <Briefcase size={14} className="text-gray-500" />
+              <input
+                type="text"
+                placeholder="Role"
+                className="w-full bg-transparent py-2.5 text-sm outline-none text-white placeholder:text-gray-600"
+                value={filters.role}
+                onChange={(e) => setFilter("role", e.target.value)}
+              />
+            </div>
+            <select
+              className="px-4 py-2.5 rounded-lg border text-sm outline-none text-gray-300 appearance-none"
+              style={{ background: "#111111", borderColor: "#222222" }}
+              value={filters.level}
+              onChange={(e) => setFilter("level", e.target.value)}
+            >
+              <option value="">All Levels</option>
+              {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <select
+              className="px-4 py-2.5 rounded-lg border text-sm outline-none text-gray-300 appearance-none"
+              style={{ background: "#111111", borderColor: "#222222" }}
+              value={filters.location}
+              onChange={(e) => setFilter("location", e.target.value)}
+            >
+              <option value="">All Locations</option>
+              {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
+
+          {/* Table */}
+          <div className="rounded-xl border overflow-hidden" style={{ borderColor: "#1e1e1e" }}>
+            <table className="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr style={{ background: "#111111" }}>
+                  {["Company", "Role", "Level", "Location", "Exp", "Base", "Bonus", "Stock/yr", "Total"].map(h => (
+                    <th key={h} className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 border-b" style={{ borderColor: "#1e1e1e" }}>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {loading ? (
+                  [...Array(6)].map((_, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #1a1a1a" }}>
+                      <td colSpan={9} className="px-4 py-4">
+                        <div className="h-3 rounded animate-pulse" style={{ background: "#1a1a1a" }} />
+                      </td>
+                    </tr>
+                  ))
+                ) : salaries.map((s) => (
+                  <tr
+                    key={s.id}
+                    className="group transition-colors"
+                    style={{ borderBottom: "1px solid #1a1a1a" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#111111")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <td className="px-4 py-3">
+                      <Link href={`/company/${s.company}`} className="flex items-center gap-2 group/link">
+                        <CompanyInitial name={s.company} />
+                        <span className="font-semibold text-white group-hover/link:text-indigo-400 transition-colors">
+                          {s.company.charAt(0).toUpperCase() + s.company.slice(1)}
+                        </span>
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-gray-400 max-w-[180px] truncate">{s.role}</td>
+                    <td className="px-4 py-3"><LevelBadge level={s.level} /></td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      <div className="flex items-center gap-1">
+                        <MapPin size={11} /> {s.location}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-400 font-mono text-xs">{s.experience_years}y</td>
+                    <td className="px-4 py-3 text-gray-400 font-mono text-xs text-right">{formatINR(s.base_salary)}</td>
+                    <td className="px-4 py-3 text-gray-400 font-mono text-xs text-right">{s.bonus > 0 ? formatINR(s.bonus) : "—"}</td>
+                    <td className="px-4 py-3 text-gray-400 font-mono text-xs text-right">{s.stock > 0 ? formatINR(s.stock) : "—"}</td>
+                    <td className="px-4 py-3 text-right">
+                      <span className="font-bold font-mono text-sm" style={{ color: "#818cf8" }}>
+                        {formatINR(s.total_compensation)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
       </div>
     </div>
   );
