@@ -1,0 +1,10 @@
+{
+  "name": "compensation-intelligence-system",
+  "private": true,
+  "description": "Monorepo for TalentDash Compensation Intelligence System",
+  "scripts": {
+    "backend:dev": "npm run dev --prefix talentdash/backend",
+    "frontend:dev": "npm run dev --prefix talentdash/frontend",
+    "install:all": "npm install --prefix talentdash/backend && npm install --prefix talentdash/frontend"
+  }
+}
