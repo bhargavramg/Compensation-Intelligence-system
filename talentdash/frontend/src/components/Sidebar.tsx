@@ -53,10 +53,13 @@ export function Sidebar({ totalSalaries = 0 }: { totalSalaries?: number }) {
       </nav>
 
       <div className="mt-auto space-y-4">
-        <button className="w-full bg-accent hover:bg-accent/90 text-bg py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+        <Link 
+          href="/submit"
+          className="w-full bg-accent hover:bg-accent/90 text-bg py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+        >
           <PlusCircle size={18} strokeWidth={3} />
           Submit salary
-        </button>
+        </Link>
         
         <div className="px-4 py-2">
           <p className="text-[10px] text-text-muted uppercase tracking-widest text-center">

@@ -109,9 +109,12 @@ export default function SalariesPage() {
             >
               Browse Salaries <ArrowRight size={16} />
             </button>
-            <button className="px-6 py-3 rounded-lg font-semibold text-gray-300 hover:text-white transition-colors">
-              Submit Your Salary
-            </button>
+            <Link 
+              href="/submit"
+              className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:bg-white/10 active:scale-[0.98] border border-white/10"
+            >
+              <PlusCircle size={16} /> Submit Salary
+            </Link>
           </div>
 
           {/* Stat Pills */}

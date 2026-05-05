@@ -67,6 +67,19 @@ export async function getCompanies(): Promise<{ data: { company: string; count: 
   return res.json();
 }
 
+export async function submitSalary(data: any): Promise<any> {
+  const res = await fetch(`${API}/ingest-salary`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to submit salary");
+  }
+  return res.json();
+}
+
 export function formatINR(amount: number): string {
   if (amount >= 10000000) {
     return `₹${(amount / 10000000).toFixed(2)} Cr`;
