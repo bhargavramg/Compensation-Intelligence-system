@@ -126,27 +126,21 @@ export default function SalariesPage() {
     return { median, p90, companies: uniqueCompanies };
   }, [salaries]);
 
-  const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResponse | null>(null);
-
   useEffect(() => {
-    if (!benchmark.tc || isNaN(parseFloat(benchmark.tc)) || parseFloat(benchmark.tc) <= 0) {
-      setBenchmarkResult(null);
+    if (!benchmark.tc || isNaN(parseFloat(benchmark.tc))) {
+      setPercentile(null);
       return;
     }
-    const t = setTimeout(() => {
-      getBenchmark(benchmark.tc, benchmark.level)
-        .then(setBenchmarkResult)
-        .catch(() => setBenchmarkResult(null));
-    }, 500);
-    return () => clearTimeout(t);
-  }, [benchmark.tc, benchmark.level]);
-
-  const getInsight = (p: number) => {
-    if (p >= 95) return { text: `Top 5% compensation at ${benchmark.level}`, color: "text-emerald-400", sub: "Exceptional market positioning." };
-    if (p >= 75) return { text: `Above ${p}% of ${benchmark.level} engineers`, color: "text-indigo-400", sub: "Strong market standing." };
-    if (p >= 40) return { text: "Around market average", color: "text-gray-300", sub: "Aligned with most peers." };
-    return { text: "Below market median", color: "text-amber-400", sub: "High potential for salary growth." };
-  };
+    const userTC = parseFloat(benchmark.tc) * 100000;
+    const relevantSalaries = salaries.filter(s => s.level === benchmark.level);
+    if (relevantSalaries.length === 0) {
+      setPercentile(null);
+      return;
+    }
+    const countLower = relevantSalaries.filter(s => s.total_compensation <= userTC).length;
+    const p = (countLower / relevantSalaries.length) * 100;
+    setPercentile(Math.round(p));
+  }, [benchmark, salaries]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -203,7 +197,7 @@ export default function SalariesPage() {
                   <Trophy size={16} className="text-indigo-400" />
                   Quick Benchmark
                 </h3>
-                <p className="text-gray-500 text-xs font-medium">Professional market intelligence engine.</p>
+                <p className="text-gray-500 text-xs font-medium">Compare your TC with the market.</p>
               </div>
 
               <div className="space-y-5">
@@ -215,11 +209,11 @@ export default function SalariesPage() {
                       value={benchmark.level}
                       onChange={e => setBenchmark(prev => ({ ...prev, level: e.target.value }))}
                     >
-                      {LEVELS.slice(0, 10).map(l => <option key={l} value={l}>{l}</option>)}
+                      {LEVELS.slice(0, 6).map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Your TC (Lakhs)</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">TC (Lakhs)</span>
                     <input 
                       type="number" 
                       placeholder="e.g. 24"
@@ -230,59 +224,29 @@ export default function SalariesPage() {
                   </div>
                 </div>
 
-                {benchmarkResult ? (
-                  <div className="pt-2 space-y-6 animate-in fade-in slide-in-from-bottom-1 duration-300">
-                    {benchmarkResult.error ? (
-                      <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex gap-3">
-                         <Info size={16} className="text-amber-500 shrink-0 mt-0.5" />
-                         <p className="text-xs text-amber-200 leading-normal">{benchmarkResult.message}</p>
+                {percentile !== null ? (
+                  <div className="pt-2 space-y-4 animate-in fade-in slide-in-from-bottom-1 duration-300">
+                    <div className="space-y-2.5">
+                      <div className="flex justify-between text-[11px] font-bold">
+                        <span className="text-gray-500 uppercase tracking-wider">Market Percentile</span>
+                        <span className={percentile > 70 ? 'text-emerald-400' : 'text-indigo-400'}>{percentile}%</span>
                       </div>
-                    ) : (
-                      <>
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-[11px] font-bold">
-                            <span className="text-gray-500 uppercase tracking-wider">Market Rank</span>
-                            <span className={benchmarkResult.percentile > 70 ? 'text-emerald-400' : 'text-indigo-400'}>
-                              {benchmarkResult.percentile === 99 ? "Top 1%" : `${benchmarkResult.percentile}th Percentile`}
-                            </span>
-                          </div>
-                          <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-indigo-500 transition-all duration-1000 ease-out" 
-                              style={{ width: `${benchmarkResult.percentile}%`, backgroundColor: benchmarkResult.percentile > 70 ? '#10b981' : '#6366f1' }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-2">
-                           <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 space-y-3">
-                              <div className="space-y-1">
-                                <p className={`text-sm font-bold ${getInsight(benchmarkResult.percentile).color}`}>
-                                  {getInsight(benchmarkResult.percentile).text}
-                                </p>
-                                <p className="text-[11px] text-gray-500 font-medium">
-                                  {getInsight(benchmarkResult.percentile).sub}
-                                </p>
-                              </div>
-                              
-                              <div className="pt-3 border-t border-white/5 grid grid-cols-3 gap-2">
-                                <div className="space-y-1">
-                                  <p className="text-[9px] text-gray-600 uppercase font-bold tracking-tighter">Median</p>
-                                  <p className="text-[12px] text-white font-mono font-bold">{formatINR(benchmarkResult.metrics.p50)}</p>
-                                </div>
-                                <div className="space-y-1 border-x border-white/5 px-2">
-                                  <p className="text-[9px] text-gray-600 uppercase font-bold tracking-tighter">Top 25%</p>
-                                  <p className="text-[12px] text-white font-mono font-bold">{formatINR(benchmarkResult.metrics.p75)}</p>
-                                </div>
-                                <div className="space-y-1 pl-2">
-                                  <p className="text-[9px] text-gray-600 uppercase font-bold tracking-tighter">Top 10%</p>
-                                  <p className="text-[12px] text-white font-mono font-bold">{formatINR(benchmarkResult.metrics.p90)}</p>
-                                </div>
-                              </div>
-                           </div>
-                        </div>
-                      </>
-                    )}
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-indigo-500 transition-all duration-700 ease-out" 
+                          style={{ width: `${percentile}%`, backgroundColor: percentile > 70 ? '#10b981' : '#6366f1' }}
+                        />
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 flex gap-3 items-start">
+                       <Info size={14} className="text-gray-400 shrink-0 mt-0.5" />
+                       <p className="text-[12px] text-gray-300 leading-normal">
+                         You earn more than <span className="font-bold text-white">{percentile}%</span> of {benchmark.level} engineers. 
+                         <span className="block mt-1 text-gray-500 text-[11px]">
+                           {percentile > 80 ? "Top-tier compensation." : percentile < 30 ? "Room for growth." : "Balanced market pay."}
+                         </span>
+                       </p>
+                    </div>
                   </div>
                 ) : (
                   <div className="pt-6 pb-2 text-center opacity-40">

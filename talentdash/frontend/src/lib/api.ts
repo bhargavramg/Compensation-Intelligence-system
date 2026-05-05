@@ -102,19 +102,3 @@ export function levelColor(level: string): string {
   };
   return map[level] || "#94a3b8";
 }
-export interface BenchmarkResponse {
-  percentile: number;
-  metrics: { p50: number; p75: number; p90: number };
-  count: number;
-  userTC: number;
-  error?: string;
-  message?: string;
-}
-
-export async function getBenchmark(tc: string, level: string, location?: string): Promise<BenchmarkResponse> {
-  const params = new URLSearchParams({ tc, level });
-  if (location) params.append("location", location);
-  const res = await fetch(`${API}/benchmark?${params.toString()}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Benchmark failed");
-  return res.json();
-}
