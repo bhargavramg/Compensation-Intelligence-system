@@ -33,7 +33,18 @@ const COMPANY_COLORS: Record<string, string> = {
 function CompanyLogo({ name }: { name: string }) {
   const [error, setError] = useState(false);
   const domain = COMPANY_DOMAINS[name.toLowerCase()];
-  const color = COMPANY_COLORS[name.toLowerCase()] || "#10b981";
+  
+  // Generate a consistent color based on the name
+  const getDynamicColor = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = hash % 360;
+    return `hsl(${h}, 70%, 45%)`;
+  };
+
+  const color = COMPANY_COLORS[name.toLowerCase()] || getDynamicColor(name);
 
   if (domain && !error) {
     return (
@@ -99,7 +110,7 @@ export default function SalariesPage() {
 
   useEffect(() => {
     getCompanies()
-      .then(res => setCompanies(res.data.slice(0, 8)))
+      .then(res => setCompanies(res.data))
       .catch(console.error);
   }, []);
 
