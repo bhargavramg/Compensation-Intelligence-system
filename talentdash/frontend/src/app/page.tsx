@@ -259,36 +259,6 @@ export default function SalariesPage() {
           </div>
         </div>
 
-        {/* Company Grid Section */}
-        <section className="space-y-6 pt-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h2 className="text-white font-bold text-xl tracking-tight">Market Coverage</h2>
-              <p className="text-gray-500 text-sm font-medium">Real data from 47 top-tier firms.</p>
-            </div>
-            <Link href="/company" className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest">
-              View all <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {companies.map((c) => (
-              <Link
-                key={c.company}
-                href={`/company/${c.company}`}
-                className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 hover:bg-[#141414] transition-all group"
-              >
-                <CompanyLogo name={c.company} />
-                <div className="min-w-0">
-                  <div className="text-white font-bold text-sm truncate group-hover:text-indigo-400 transition-colors">
-                    {c.company.charAt(0).toUpperCase() + c.company.slice(1)}
-                  </div>
-                  <div className="text-gray-500 text-[11px] font-medium">{c.count} records</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
 
         {/* Data Table Section */}
         <section ref={tableRef} className="space-y-6 pt-8">
