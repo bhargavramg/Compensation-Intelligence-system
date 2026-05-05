@@ -130,10 +130,14 @@ function LiveBenchmarkDemo() {
            </div>
         </div>
 
-        <div className="space-y-3 pt-2">
+        <div className="space-y-4 pt-2">
            <div className="flex justify-between items-end">
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Percentile Rank</span>
-              <span className="text-2xl font-bold text-indigo-400 font-mono">{(val * 1.8).toFixed(1)}%</span>
+              <div className="w-24 text-right">
+                <span className="text-2xl font-bold text-indigo-400 font-mono">
+                  {Math.min(val * 1.8, 100).toFixed(1)}%
+                </span>
+              </div>
            </div>
            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
               <div 
@@ -143,11 +147,11 @@ function LiveBenchmarkDemo() {
            </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/10 space-y-2">
+        <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/10 min-h-[100px] flex flex-col justify-between">
            <p className="text-[11px] text-gray-300 font-medium">
-             You are earning more than <span className="text-white font-bold">{(val * 1.8).toFixed(0)}%</span> of engineers at this level in India.
+             <span className="text-white font-bold">Top {Math.max(1, (100 - (val * 1.8))).toFixed(0)}%</span> of engineers at this level.
            </p>
-           <div className="flex gap-4 pt-2 border-t border-indigo-500/10">
+           <div className="flex gap-6 pt-3 border-t border-indigo-500/10 mt-auto">
               <div className="space-y-0.5">
                 <p className="text-[8px] text-gray-500 uppercase font-bold">Market Median</p>
                 <p className="text-[10px] text-white font-bold">₹38.5L</p>
