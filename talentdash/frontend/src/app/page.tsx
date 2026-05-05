@@ -147,45 +147,45 @@ export default function SalariesPage() {
       <div className="max-w-[1200px] mx-auto px-12 py-12 space-y-12 animate-fade-in">
 
         {/* Hero & Benchmark Grid */}
-        <div className="flex flex-col items-center text-center space-y-10 py-16 relative">
+        <div className="flex flex-col items-center text-center pt-8 pb-20 relative">
           {/* Subtle Background Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-500/5 blur-[120px] pointer-events-none" />
 
           {/* Hero Content */}
-          <section className="space-y-6 max-w-4xl relative z-10">
-            <div className="space-y-4">
-              <h1 className="text-5xl sm:text-6xl font-bold leading-[1.1] tracking-tight text-white font-display px-4">
+          <section className="space-y-5 max-w-4xl relative z-10">
+            <div className="space-y-3">
+              <h1 className="text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight text-white font-display px-4">
                 Understand what <span className="text-indigo-400">engineers</span> <br className="hidden sm:block" /> are really paid.
               </h1>
-              <p className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed px-4 opacity-80">
+              <p className="text-gray-400 text-lg sm:text-xl max-w-xl mx-auto leading-relaxed px-6 opacity-75">
                 Structured by level. Comparable by design. The most accurate real-time compensation breakdowns for India's tech ecosystem.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
               <button
                 onClick={scrollToTable}
-                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-sm text-white bg-indigo-500 hover:bg-indigo-400 transition-all active:scale-[0.98] shadow-xl shadow-indigo-500/10"
+                className="w-full sm:w-auto px-10 py-3 rounded-xl font-bold text-sm text-white bg-indigo-500 hover:bg-indigo-400 transition-all active:scale-[0.98] shadow-xl shadow-indigo-500/10"
               >
                 Browse Salaries
               </button>
               <Link 
                 href="/submit"
-                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-sm text-gray-300 border border-white/5 hover:bg-white/5 transition-all active:scale-[0.98]"
+                className="w-full sm:w-auto px-10 py-3 rounded-xl font-bold text-sm text-gray-300 border border-white/5 hover:bg-white/5 transition-all active:scale-[0.98]"
               >
                 Submit Salary
               </Link>
             </div>
 
-            <div className="flex items-center justify-center gap-10 sm:gap-20 pt-8 mt-4 border-t border-white/5">
+            <div className="flex items-center justify-center gap-12 sm:gap-24 pt-6 mt-6 border-t border-white/5">
               {[
                 { value: `${meta.total || "500"}+`, label: "Records" },
                 { value: "L3 → L8", label: "Levels" },
                 { value: "Verified", label: "Market Data" },
               ].map((stat) => (
                 <div key={stat.label} className="space-y-0.5">
-                  <div className="text-white font-bold text-xl sm:text-2xl tracking-tighter">{stat.value}</div>
-                  <div className="text-gray-500 text-[9px] uppercase font-bold tracking-[0.25em]">{stat.label}</div>
+                  <div className="text-white font-bold text-2xl sm:text-3xl tracking-tight leading-none">{stat.value}</div>
+                  <div className="text-gray-600 text-[10px] uppercase font-bold tracking-[0.25em]">{stat.label}</div>
                 </div>
               ))}
             </div>
