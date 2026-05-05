@@ -11,7 +11,10 @@ export default function CompaniesPage() {
 
   useEffect(() => {
     getCompanies()
-      .then((res) => setCompanies(res.data))
+      .then((res) => {
+        const sorted = res.data.sort((a, b) => b.avg_compensation - a.avg_compensation);
+        setCompanies(sorted);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
