@@ -407,7 +407,11 @@ export default function SalariesPage() {
                 {salaries.map((s) => (
                   <tr key={s.id} className="hover:bg-white/[0.03] transition-all duration-300 group cursor-pointer">
                     <td className="px-6 py-5">
-                      <Link href={`/company/${s.company}`} className="flex items-center gap-3">
+                      <Link 
+                        href={`/company/${encodeURIComponent(s.company.trim())}`} 
+                        prefetch={false}
+                        className="flex items-center gap-3"
+                      >
                         <CompanyLogo name={s.company} />
                         <span className="font-bold text-white group-hover:text-indigo-400 transition-colors">
                           {s.company.charAt(0).toUpperCase() + s.company.slice(1)}
