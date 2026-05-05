@@ -112,10 +112,9 @@ export default function SalariesPage() {
           
           {/* Left: Hero Content */}
           <section className="lg:col-span-7 space-y-8 pt-2">
-            <div className="space-y-4">
-              <h1 className="text-[48px] font-bold leading-[1.15] tracking-tight text-white font-display">
-                Know what <span className="text-indigo-400">engineers</span><br />
-                actually make.
+            <div className="space-y-5">
+              <h1 className="text-[42px] sm:text-[48px] font-semibold leading-[1.1] tracking-tight text-white font-display max-w-2xl">
+                Understand what <span className="text-indigo-400">engineers</span> are really paid.
               </h1>
               <p className="text-gray-300 text-lg max-w-md leading-relaxed opacity-90">
                 Structured by level. Comparable by design. Real TC breakdowns for India's tech ecosystem.
