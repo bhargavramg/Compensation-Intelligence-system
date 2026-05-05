@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { getSalaries, getCompanies, formatINR, type Salary } from "@/lib/api";
 import { LevelBadge } from "@/components/LevelBadge";
-import { Search, MapPin, Briefcase, TrendingUp, Database, Building2, ChevronRight, ArrowRight, PlusCircle, Target, Trophy, Info } from "lucide-react";
+import { Search, MapPin, Briefcase, TrendingUp, Database, Building2, ChevronRight, ArrowRight, PlusCircle, Target, Trophy, Info, Sparkles, ShieldCheck, BarChart3, Fingerprint, ArrowUpRight } from "lucide-react";
 
 const LEVELS = ["L3","L4","L5","L6","L7","SDE1","SDE2","SDE3","Senior","Staff","Principal","E3","E4","E5","E6","E7","Director"];
 const LOCATIONS = ["Bangalore", "Hyderabad", "Pune", "Remote", "Gurgaon"];
