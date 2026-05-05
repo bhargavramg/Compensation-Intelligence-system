@@ -273,9 +273,15 @@ export default function SalariesPage() {
                 See what top engineers <br />
                 <span className="text-gradient-indigo">ACTUALLY</span> earn.
               </h1>
-              <p className="text-gray-400 text-lg sm:text-2xl max-w-xl leading-relaxed font-medium">
-                The definitive compensation platform for India's tech ecosystem. Real data. Real levels. Total transparency.
-              </p>
+              <div className="space-y-1">
+                <p className="text-xl sm:text-2xl font-bold tracking-tight">
+                  <span className="text-white">Real salaries.</span>{" "}
+                  <span className="text-gradient-indigo">Real levels.</span>
+                </p>
+                <p className="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-[0.2em]">
+                  No noise.
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
