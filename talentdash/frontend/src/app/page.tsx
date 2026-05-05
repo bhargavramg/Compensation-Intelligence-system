@@ -258,28 +258,28 @@ export default function SalariesPage() {
       {/* Animated Background Grid */}
       <div className="absolute inset-0 bg-grid-premium animate-grid pointer-events-none opacity-40" />
       
-      <div className="max-w-[1200px] mx-auto px-12 pt-6 pb-12 space-y-12 relative z-10 animate-fade-in">
+      <div className="max-w-[1200px] mx-auto px-12 pt-4 pb-12 space-y-12 relative z-10 animate-fade-in">
 
         {/* 2-Column Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pt-8 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-6 pb-16">
           
           {/* Left: Content */}
-          <section className="lg:col-span-7 space-y-8 pt-4">
-            <div className="space-y-4">
+          <section className="lg:col-span-7 space-y-6 max-w-[600px]">
+            <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/10 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
                  <Fingerprint size={12} className="text-indigo-400" /> Verified Market Data
               </div>
               <h1 className="font-extrabold tracking-tighter font-display flex flex-col items-start text-left">
-                <span className="text-6xl sm:text-8xl text-white leading-[0.95]">Real salaries.</span>
-                <span className="text-3xl sm:text-5xl text-gradient-indigo leading-tight mt-1">Built on real levels.</span>
-                <span className="text-2xl sm:text-4xl text-gray-600 mt-2">No noise.</span>
+                <span className="text-5xl sm:text-6xl text-white leading-[0.95]">Real salaries.</span>
+                <span className="text-2xl sm:text-4xl text-gradient-indigo leading-tight mt-0.5">Built on real levels.</span>
+                <span className="text-xl sm:text-3xl text-gray-600 mt-1">No noise.</span>
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
               <button
                 onClick={scrollToTable}
-                className="w-full sm:w-auto px-10 py-4 rounded-xl font-bold text-base text-white bg-indigo-500 hover:bg-indigo-400 transition-all active:scale-[0.98] shadow-2xl shadow-indigo-500/20 flex items-center justify-center gap-2 group"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-sm text-white bg-indigo-500 hover:bg-indigo-400 transition-all active:scale-[0.98] shadow-2xl shadow-indigo-500/20 flex items-center justify-center gap-2 group"
               >
                 Browse Salaries <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
