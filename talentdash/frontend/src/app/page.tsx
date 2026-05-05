@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
-import { getSalaries, getCompanies, getBenchmark, formatINR, type Salary, type BenchmarkResponse } from "@/lib/api";
+import { getSalaries, getCompanies, formatINR, type Salary } from "@/lib/api";
 import { LevelBadge } from "@/components/LevelBadge";
 import { Search, MapPin, Briefcase, TrendingUp, Database, Building2, ChevronRight, ArrowRight, PlusCircle, Target, Trophy, Info } from "lucide-react";
 
