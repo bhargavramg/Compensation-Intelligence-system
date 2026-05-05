@@ -34,7 +34,6 @@ function CompanyLogo({ name }: { name: string }) {
   const [error, setError] = useState(false);
   const domain = COMPANY_DOMAINS[name.toLowerCase()];
   
-  // Generate a consistent color based on the name
   const getDynamicColor = (str: string) => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -259,14 +258,14 @@ export default function SalariesPage() {
       {/* Animated Background Grid */}
       <div className="absolute inset-0 bg-grid-premium animate-grid pointer-events-none opacity-40" />
       
-      <div className="max-w-[1200px] mx-auto px-12 py-12 space-y-12 relative z-10 animate-fade-in">
+      <div className="max-w-[1200px] mx-auto px-12 pt-6 pb-12 space-y-12 relative z-10 animate-fade-in">
 
         {/* 2-Column Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pt-8 pb-16">
           
           {/* Left: Content */}
-          <section className="lg:col-span-7 space-y-10">
-            <div className="space-y-6">
+          <section className="lg:col-span-7 space-y-8 pt-4">
+            <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/10 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
                  <Fingerprint size={12} className="text-indigo-400" /> Verified Market Data
               </div>
