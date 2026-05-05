@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { getSalaries, getCompanies, formatINR, type Salary } from "@/lib/api";
 import { LevelBadge } from "@/components/LevelBadge";
@@ -37,7 +37,11 @@ export default function SalariesPage() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ company: "", role: "", level: "", location: "" });
   const [sort, setSort] = useState<"asc" | "desc">("desc");
-  const [showTable, setShowTable] = useState(false);
+  const tableRef = useRef<HTMLElement>(null);
+
+  const scrollToTable = () => {
+    tableRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -99,7 +103,7 @@ export default function SalariesPage() {
           {/* CTA Buttons */}
           <div className="flex items-center justify-center gap-4 pt-2">
             <button
-              onClick={() => setShowTable(true)}
+              onClick={scrollToTable}
               className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
               style={{ background: "#6366f1" }}
             >
@@ -166,7 +170,7 @@ export default function SalariesPage() {
         </section>
 
         {/* Salary Table (shown on Browse click or by default) */}
-        <section className="space-y-4">
+        <section ref={tableRef} className="space-y-4 pt-10">
           <div className="flex items-center justify-between">
             <h2 className="text-white font-bold text-lg">All Salary Records</h2>
             <span className="text-gray-500 text-sm">{meta.total} results</span>
