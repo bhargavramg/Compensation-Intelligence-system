@@ -22,7 +22,7 @@ export function Sidebar({ totalSalaries = 0 }: { totalSalaries?: number }) {
     <aside className="w-64 h-screen sticky top-0 bg-surface border-r border-border flex flex-col p-4">
       <div className="flex items-center gap-3 px-4 mb-10">
         <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-bg shadow-lg shadow-accent/20">
-          <LayoutDashboard size={20} weight="bold" />
+          <LayoutDashboard size={20} strokeWidth={2.5} />
         </div>
         <div>
           <h1 className="text-lg font-bold leading-none font-display tracking-tight text-white">PayLevel</h1>
