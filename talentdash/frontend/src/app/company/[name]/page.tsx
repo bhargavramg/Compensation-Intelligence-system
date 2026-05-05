@@ -1,24 +1,33 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getCompany, formatINR, levelColor, type CompanyResponse, type Salary } from "@/lib/api";
+import { getCompany, getCompanies, formatINR, type CompanyResponse } from "@/lib/api";
 import { LevelBadge } from "@/components/LevelBadge";
-import { Building2, TrendingUp, Users, MapPin, ChevronDown, Filter, ArrowLeft } from "lucide-react";
+import { Building2, TrendingUp, Users, ChevronDown, ArrowLeft } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function CompanyPage() {
   const { name } = useParams<{ name: string }>();
+  const router = useRouter();
   const [data, setData] = useState<CompanyResponse | null>(null);
+  const [allCompanies, setAllCompanies] = useState<{ company: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     getCompany(decodeURIComponent(name))
       .then(setData)
       .catch(() => setError("Company not found"))
       .finally(() => setLoading(false));
   }, [name]);
+
+  useEffect(() => {
+    getCompanies()
+      .then(res => setAllCompanies(res.data.sort((a, b) => a.company.localeCompare(b.company))))
+      .catch(console.error);
+  }, []);
 
   const chartData = useMemo(() => {
     if (!data) return [];
@@ -66,12 +75,20 @@ export default function CompanyPage() {
                </h1>
              </div>
              
-             <div className="flex gap-2 p-1 bg-surface border border-border rounded-xl">
-                <div className="px-4 py-2 text-xs font-bold bg-surface-muted rounded-lg flex items-center gap-2">
-                  Select company
-                  <div className="bg-accent/10 text-accent px-2 py-0.5 rounded border border-accent/20">{displayName} ({data.total_entries})</div>
-                  <ChevronDown size={14} className="text-text-muted" />
-                </div>
+             <div className="relative group">
+                <select 
+                  className="appearance-none bg-surface border border-border px-4 py-2.5 rounded-xl text-xs font-bold outline-none hover:border-accent/50 transition-all cursor-pointer pr-10"
+                  value={data.company}
+                  onChange={(e) => router.push(`/company/${e.target.value}`)}
+                >
+                  <option value="" disabled>Select company</option>
+                  {allCompanies.map(c => (
+                    <option key={c.company} value={c.company}>
+                      {c.company.charAt(0).toUpperCase() + c.company.slice(1)} ({c.count})
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
              </div>
           </div>
         </section>
