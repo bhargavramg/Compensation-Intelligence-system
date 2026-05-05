@@ -8,21 +8,49 @@ import { Search, MapPin, Briefcase, TrendingUp, Database, Building2, ChevronRigh
 const LEVELS = ["L3","L4","L5","L6","L7","SDE1","SDE2","SDE3","Senior","Staff","Principal","E3","E4","E5","E6","E7","Director"];
 const LOCATIONS = ["Bangalore", "Hyderabad", "Pune", "Remote", "Gurgaon"];
 
+const COMPANY_DOMAINS: Record<string, string> = {
+  google: "google.com", microsoft: "microsoft.com", amazon: "amazon.com", meta: "meta.com",
+  flipkart: "flipkart.com", swiggy: "swiggy.com", razorpay: "razorpay.com", zepto: "zepto.com",
+  meesho: "meesho.com", phonepe: "phonepe.com", cred: "cred.club", groww: "groww.in",
+  zomato: "zomato.com", paytm: "paytm.com", infosys: "infosys.com", wipro: "wipro.com",
+  tcs: "tcs.com", hcl: "hcltech.com", netflix: "netflix.com", uber: "uber.com",
+  ola: "olacabs.com", byju: "byjus.com", unacademy: "unacademy.com", atlassian: "atlassian.com",
+  salesforce: "salesforce.com", stripe: "stripe.com", nvidia: "nvidia.com", adobe: "adobe.com",
+  postman: "postman.com", browserstack: "browserstack.com", coinbase: "coinbase.com",
+  intuit: "intuit.com", walmart: "walmart.com", cisco: "cisco.com", vmware: "vmware.com",
+  servicenow: "servicenow.com", paypal: "paypal.com", zoho: "zoho.com",
+  freshworks: "freshworks.com", accenture: "accenture.com", cognizant: "cognizant.com",
+  thoughtworks: "thoughtworks.com", "goldman sachs": "goldmansachs.com", "morgan stanley": "morganstanley.com"
+};
+
 const COMPANY_COLORS: Record<string, string> = {
   google: "#4285F4", microsoft: "#00A4EF", amazon: "#FF9900", meta: "#0866FF",
   flipkart: "#F9A825", swiggy: "#FC8019", razorpay: "#2D81FF", zepto: "#9C27B0",
   meesho: "#F43B96", phonepe: "#5F259F", cred: "#1A1A1A", groww: "#00D09C",
-  zomato: "#E23744", paytm: "#00BAF2", infosys: "#0070C0", wipro: "#344899",
-  tcs: "#C00000", hcl: "#0076C0", netflix: "#E50914", uber: "#000000",
-  ola: "#343434", byju: "#00A0E3", unacademy: "#08BD80", atlassian: "#0052CC",
-  salesforce: "#00A1E0",
+  zomato: "#E23744", paytm: "#00BAF2",
 };
 
-function CompanyInitial({ name }: { name: string }) {
+function CompanyLogo({ name }: { name: string }) {
+  const [error, setError] = useState(false);
+  const domain = COMPANY_DOMAINS[name.toLowerCase()];
   const color = COMPANY_COLORS[name.toLowerCase()] || "#10b981";
+
+  if (domain && !error) {
+    return (
+      <div className="w-8 h-8 rounded-lg bg-white overflow-hidden flex items-center justify-center border border-white/10 flex-shrink-0 shadow-sm">
+        <img 
+          src={`https://logo.clearbit.com/${domain}`} 
+          alt={name}
+          className="w-6 h-6 object-contain"
+          onError={() => setError(true)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
-      className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+      className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm"
       style={{ backgroundColor: color }}
     >
       {name.charAt(0).toUpperCase()}
@@ -239,7 +267,7 @@ export default function SalariesPage() {
                 href={`/company/${c.company}`}
                 className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 hover:bg-[#141414] transition-all group"
               >
-                <CompanyInitial name={c.company} />
+                <CompanyLogo name={c.company} />
                 <div className="min-w-0">
                   <div className="text-white font-bold text-sm truncate group-hover:text-indigo-400 transition-colors">
                     {c.company.charAt(0).toUpperCase() + c.company.slice(1)}
@@ -321,7 +349,7 @@ export default function SalariesPage() {
                   <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-4">
                       <Link href={`/company/${s.company}`} className="flex items-center gap-3 group">
-                        <CompanyInitial name={s.company} />
+                        <CompanyLogo name={s.company} />
                         <span className="font-bold text-white group-hover:text-indigo-400 transition-colors">
                           {s.company.charAt(0).toUpperCase() + s.company.slice(1)}
                         </span>
